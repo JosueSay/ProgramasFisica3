@@ -1,6 +1,7 @@
-# Importa el módulo P_Esfera o P_Plano
-import P_Esfera
-import P_Plano
+# Importar módulos necesarios
+from P_Plano import iniciar_simulacion, cerrar_simulacion_grafica
+
+import math
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -11,7 +12,8 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QLabel,
     QComboBox,
-    QDesktopWidget
+    QDesktopWidget,
+    QMessageBox
 )
 
 # Definir partículas predefinidas
@@ -22,6 +24,25 @@ particulas_predefinidas = {
     "Electrón": [-1.602e-19, 9.109e-31],
     "Neutrón": [0, 1.675e-27]
 }
+
+# Función para cerrar la simulación y salir del programa
+def cerrar_simulacion():
+    global current_scene
+    try:
+        cerrar_simulacion_grafica()  # Intenta cerrar la simulación gráfica
+        mensaje = QMessageBox()
+        mensaje.setWindowTitle("Finalizado")
+        mensaje.setText("El programa ha finalizado.")
+        mensaje.exec_()
+        sys.exit()
+    except KeyboardInterrupt:
+        print("\033[1m\033[91mPrograma finalizado por el usuario.\033[0m")
+    except SystemExit:
+        print("\033[1m\033[91mSimulación finalizada.\033[0m")
+    except Exception as e:
+        print(f"\033[1m\033[91mError al cerrar la simulación: {e}\033[0m")
+        sys.exit()
+        
 
 def cargar_particula(index):
     if part_selector.currentText() == "Partícula personalizada":
@@ -66,56 +87,106 @@ def guardar_datos():
         velocidad = float(velocidad)
         if velocidad > 3 * 10**8:
             velocidad = 3 * 10**8
-            print("\033[91mLa velocidad ingresada es mayor a la de la luz. Se actualizó la velocidad inicial de la partícula a la de la velocidad de la luz.\033[0m")
+            print("\033[1m\033[91mLa velocidad ingresada es mayor a la de la luz. Se actualizó la velocidad inicial de la partícula a la de la velocidad de la luz.\033[0m")
     except ValueError:
-        print("\033[91mIngresa valores numéricos para la carga de la partícula, masa y velocidad.\033[0m")
+        print("\033[1m\033[91mIngresa valores numéricos para la carga de la partícula, masa y velocidad.\033[0m")
+
         return
 
-    datos += [carga_particula, masa, velocidad]
-    
-    print("Datos ingresados:")
-    print(datos)
-    print("")
-    
+    datos += [carga_particula, masa, velocidad]    
+    datos_nuevos = [datos[0]] + [float(dato) for dato in datos[1:]]
+
     # realizar calculo
     if tipo == "Plano":    
-        # convertir datos
-        datos_decimales = [datos[0]] + [float(dato) for dato in datos[1:]]
-        
-        # obtener variables
-        epsilon_0 = 8.854e-12
-        densidad_p = datos_decimales[1]
-        carga_p = datos_decimales[2]
-        masa_p = datos_decimales[3]
-        velocidad_inicial_p = datos_decimales[4]
-        distancia_pp = (epsilon_0 * masa_p * (velocidad_inicial_p ** 2)) / (carga_p * densidad_p)
-        
-        
-        print("\033[94mLa distancia calculada es: ", distancia_pp)
-        print(" \033[0m")
-        print("Hare una nueva simulación con: ", velocidad_inicial_p)
-
-        # Iniciar una nueva simulación con los datos actualizados
-        P_Plano.iniciar_simulacion(5, velocidad_inicial_p)
+        llamarPlano(datos)
        
     else:
-        print("Hola")
-        #P_Esfera.procesar_datos(datos)
-        #simulacion(datos_decimales)
+        llamarEsfera(datos)
 
-def cerrar_simulacion():
-    # Detener la simulación aquí
-    exit()  # Cerrar el programa
+def llamarPlano(datos):
+    
+    try:
+        # Obtener variables
+        densidad_pl = float(datos[1])
+        carga_p = float(datos[2])
+        masa_p = float(datos[3])
+        velocidad_inicial_p = float(datos[4])
+        epsilon_0 = 8.85e-12
+        
+        # Mostrar datos
+        print("\033[1m\nLos datos que ingresaste son:\033[0m")
+        print("\t• Distribución: ", datos[0])
+        print("\t• Densidad superficial: ", densidad_pl, "C/m^2")
+        print("\t• Carga de la partícula: ", carga_p, "C")
+        print("\t• Masa de la partícula: ", masa_p, "Kg")
+        print("\t• Velocidad inicial de la partícula: ", velocidad_inicial_p, "m/s")
+        
+        # Calcular distancia
+        distancia = (epsilon_0 * masa_p * velocidad_inicial_p**2) / (carga_p * densidad_pl)
+        print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
+        
+        # Iniciar simulación
+        iniciar_simulacion(5, velocidad_inicial_p)
+    except Exception as e:
+        print("Error en llamarPlano:", e)
+    
+ 
+def llamarEsfera(datos):
+    try:
+        # Obtener variables
+        radio_e = float(datos[1])
+        carga_e = float(datos[2])
+        carga_p = float(datos[3])
+        masa_p = float(datos[4])
+        velocidad_inicial_p = float(datos[5])
+        epsilon_0 = 8.85e-12
+        v_luz = 3.00e8
+        agujero_negro = False
+        aviso = ""
+        
+        # Mostrar datos
+        print("\033[1m\nLos datos que ingresaste son:\033[0m")
+        print("\t• Distribución: ", datos[0])
+        print("\t• Radio de la esfera: ", datos[1], "m")
+        print("\t• Carga de la esfera: ", datos[2], "C")
+        print("\t• Carga de la partícula: ", datos[3], "C")
+        print("\t• Masa de la partícula: ", datos[4], "Kg")
+        print("\t• Velocidad inicial de la partícula: ", datos[5], "m/s\n")
+        
+        ## Calculos
+        # Calcular distancia
+        distancia = (masa_p * velocidad_inicial_p**2 * 2 * math.pi * epsilon_0 * radio_e**2) / (carga_e * carga_p) + radio_e
+        print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
+        
+        # Velocidad de escape
+        velocidad_escape = math.sqrt((carga_p * carga_e) / (2 * math.pi * epsilon_0 * masa_p * radio_e))
+        print("\033[1m\033[34mLa velocidad de escape es de:\033[0m", velocidad_escape, "m/s\n")
+        
+        # Caga máxima
+        Q_max = (v_luz**2 * 2 * math.pi * epsilon_0 * masa_p * radio_e) / carga_p
+        print("\033[1m\033[34mLa carga máxima es de:\033[0m", Q_max, "C\n")
+        
+        # Comprobar que sea un agujero negro
+        if(carga_e >= Q_max):
+            agujero_negro = True
+            aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
+            print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
 
+        
+    except Exception as e:
+        print("Error en llamarEsfera:", e)
+
+# Creación de la aplicación y la ventana principal
 app = QApplication(sys.argv)
-app.setStyle('Fusion')  # Para un estilo más consistente en distintos sistemas operativos
+app.setStyle('Fusion')  # Establecer el estilo de la aplicación
 window = QWidget()
 window.setWindowTitle("Registro de Datos")  # Nombre del encabezado de la ventana
 
-layout = QVBoxLayout()
+layout = QVBoxLayout()  # Diseño de la ventana
+form_layout = QFormLayout()  # Diseño de formulario dentro de la ventana
 
-form_layout = QFormLayout()
-
+# Creación de elementos para interactuar con el usuario (Entradas, ComboBox, etc.)
+# Cada uno se agrega al formulario
 tipoSelector = QComboBox()
 tipoSelector.addItems(["Esfera", "Plano"])
 tipoSelector.setCurrentIndex(1)  # Iniciar con la opción de "Plano"
@@ -156,28 +227,31 @@ velocidad_input = QLineEdit()
 velocidad_input.setPlaceholderText("Velocidad inicial (Metros/Segundos)")
 form_layout.addRow("Velocidad inicial:", velocidad_input)
 
-submit_button = QPushButton("Guardar datos")
-submit_button.clicked.connect(guardar_datos)
+submit_button = QPushButton("Guardar datos")  # Botón para guardar datos
+submit_button.clicked.connect(guardar_datos)  # Conectar el botón a la función guardar_datos
+finish_button = QPushButton("Finalizar")  # Botón para finalizar
+finish_button.clicked.connect(cerrar_simulacion)  # Conectar el botón a la función cerrar_simulacion
 
+# Añadir todos los elementos al diseño de la ventana
 layout.addLayout(form_layout)
 layout.addWidget(submit_button)
+layout.addWidget(finish_button)
 window.setLayout(layout)
 
-# Obtener información sobre la pantalla
+# Configurar la ventana y mostrarla en el centro de la pantalla
 desktop = QDesktopWidget()
 screen_width = desktop.screen().width()
 screen_height = desktop.screen().height()
 
-# Obtener el tamaño de la ventana
 window_width = window.frameSize().width()
 window_height = window.frameSize().height()
 
-# Calcular el centro
 x = (screen_width - window_width) // 2
 y = (screen_height - window_height) // 2
 
-# Establecer la posición en el centro
 window.setGeometry(x, y, window_width, window_height)
-
 window.show()
-sys.exit(app.exec_())
+
+
+
+sys.exit(app.exec_())  # Iniciar la aplicación y esperar a que el usuario interactúe

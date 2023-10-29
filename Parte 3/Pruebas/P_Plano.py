@@ -3,6 +3,13 @@ from vpython import *
 # Variables globales para gestionar el canvas y la escena
 current_scene = None
 
+# Nueva función para cerrar la simulación
+def cerrar_simulacion_grafica():
+    global current_scene
+    if current_scene:
+        current_scene.delete()
+        current_scene = None
+
 def cerrar_canvas_actual():
     """Cierra el canvas actual si existe."""
     global current_scene
@@ -52,6 +59,3 @@ def simulacionPlano(distancia_c, velocidad_c):
 
     # Capturar eventos de clic del mouse en la escena
     current_scene.bind("click", clic)
-
-# Ejemplo de uso:
-iniciar_simulacion(5, 0.1)

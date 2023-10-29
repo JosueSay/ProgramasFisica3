@@ -1,15 +1,33 @@
-# P_Esfera.py
+from vpython import *
 
-def procesar_datos(datos):
-    # Imprime los datos recibidos
-    print("Datos recibidos en P_Esfera:", datos)
-    
-    # Verifica si hay elementos en los datos
-    if len(datos) > 1:
-        # Convierte los datos a decimales, excepto el primer elemento
-        datos_decimales = [datos[0]] + [float(dato) for dato in datos[1:]]
-        print("Datos decimales en P_Esfera:", datos_decimales)
-        # Realiza el procesamiento correspondiente para el cálculo de la esfera
-    else:
-        print("\033[91mNo hay suficientes datos para procesar en P_Esfera\033[0m")
 
+radio_e = 1
+distancia_p = 2.5
+
+
+# Crear la escena
+scene = canvas(title='Simulación Esfera', width=1920, height=1080)
+# Crear una esfera azul
+esfera = sphere(pos=vector(0, 0, 0), radius=radio_e, color=color.blue)
+
+# Crear una partícula roja
+particula = sphere(pos=esfera.pos, radius=0.1, color=color.red)
+
+# Distancia que la partícula se moverá
+distancia = distancia_p
+
+def al_hacer_click(evt):
+    # Obtener la posición del clic
+    local = evt.pos
+    if mag(local - esfera.pos) <= esfera.radius:
+        # Dirección desde la superficie de la esfera hasta el punto de destino
+        direccion = norm(local - esfera.pos)
+        # Mover la partícula
+        particula.pos = local + direccion * distancia
+        
+        # Cambiar el color de la esfera si la distancia es mayor a 2
+        if distancia_x > 2:
+            esfera.color = color.white
+
+# Asignar la función al evento del clic
+scene.bind('click', al_hacer_click)
