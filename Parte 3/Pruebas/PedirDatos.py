@@ -126,7 +126,7 @@ def llamarPlano(datos):
         print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
         
         # Iniciar simulación
-        iniciar_simulacion(5, velocidad_inicial_p)
+        iniciar_simulacion(5, velocidad_inicial_p, densidad_pl, carga_p)
     except Exception as e:
         print("Error en llamarPlano:", e)
     

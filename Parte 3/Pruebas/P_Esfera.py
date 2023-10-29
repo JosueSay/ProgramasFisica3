@@ -3,7 +3,7 @@ from vpython import *
 
 radio_e = 1
 distancia_p = 2.5
-
+aviso = False
 
 # Crear la escena
 scene = canvas(title='Simulación Esfera', width=1920, height=1080)
@@ -26,7 +26,7 @@ def al_hacer_click(evt):
         particula.pos = local + direccion * distancia
         
         # Cambiar el color de la esfera si la distancia es mayor a 2
-        if distancia_x > 2:
+        if aviso:
             esfera.color = color.white
 
 # Asignar la función al evento del clic
