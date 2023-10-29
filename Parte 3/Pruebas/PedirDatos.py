@@ -45,7 +45,7 @@ def tipo_cambiado(index):
         radio_input.setEnabled(False)
         carga_esfera_input.setEnabled(False)
 
-def guardar_datos():
+def guardar_datos():    
     tipo = tipoSelector.currentText()
     if tipo == "Plano":
         densidad = densidad_input.text()
@@ -73,16 +73,39 @@ def guardar_datos():
 
     datos += [carga_particula, masa, velocidad]
     
-    # Pasar datos a los otros módulos
-    if tipo == "Plano":
-        P_Plano.procesar_datos(datos)
-    else:
-        P_Esfera.procesar_datos(datos)
-        
-    print("")    
     print("Datos ingresados:")
     print(datos)
     print("")
+    
+    # realizar calculo
+    if tipo == "Plano":    
+        # convertir datos
+        datos_decimales = [datos[0]] + [float(dato) for dato in datos[1:]]
+        
+        # obtener variables
+        epsilon_0 = 8.854e-12
+        densidad_p = datos_decimales[1]
+        carga_p = datos_decimales[2]
+        masa_p = datos_decimales[3]
+        velocidad_inicial_p = datos_decimales[4]
+        distancia_pp = (epsilon_0 * masa_p * (velocidad_inicial_p ** 2)) / (carga_p * densidad_p)
+        
+        
+        print("\033[94mLa distancia calculada es: ", distancia_pp)
+        print(" \033[0m")
+        print("Hare una nueva simulación con: ", velocidad_inicial_p)
+
+        # Iniciar una nueva simulación con los datos actualizados
+        P_Plano.iniciar_simulacion(5, velocidad_inicial_p)
+       
+    else:
+        print("Hola")
+        #P_Esfera.procesar_datos(datos)
+        #simulacion(datos_decimales)
+
+def cerrar_simulacion():
+    # Detener la simulación aquí
+    exit()  # Cerrar el programa
 
 app = QApplication(sys.argv)
 app.setStyle('Fusion')  # Para un estilo más consistente en distintos sistemas operativos
