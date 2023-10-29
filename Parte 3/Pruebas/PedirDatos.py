@@ -1,3 +1,6 @@
+# Importa el módulo P_Esfera o P_Plano
+import P_Esfera
+import P_Plano
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -63,14 +66,23 @@ def guardar_datos():
         velocidad = float(velocidad)
         if velocidad > 3 * 10**8:
             velocidad = 3 * 10**8
+            print("\033[91mLa velocidad ingresada es mayor a la de la luz. Se actualizó la velocidad inicial de la partícula a la de la velocidad de la luz.\033[0m")
     except ValueError:
-        print("Ingresa valores numéricos para la carga de la partícula, masa y velocidad.")
+        print("\033[91mIngresa valores numéricos para la carga de la partícula, masa y velocidad.\033[0m")
         return
 
     datos += [carga_particula, masa, velocidad]
-
+    
+    # Pasar datos a los otros módulos
+    if tipo == "Plano":
+        P_Plano.procesar_datos(datos)
+    else:
+        P_Esfera.procesar_datos(datos)
+        
+    print("")    
     print("Datos ingresados:")
     print(datos)
+    print("")
 
 app = QApplication(sys.argv)
 app.setStyle('Fusion')  # Para un estilo más consistente en distintos sistemas operativos

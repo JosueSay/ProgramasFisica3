@@ -1,13 +1,15 @@
-from vpython import sphere, box, vector, color, rate
+# P_Esfera.py
 
-# Crear una esfera
-mi_esfera = sphere(pos=vector(0, 0, 0), radius=1, color=color.blue)
+def procesar_datos(datos):
+    # Imprime los datos recibidos
+    print("Datos recibidos en P_Esfera:", datos)
+    
+    # Verifica si hay elementos en los datos
+    if len(datos) > 1:
+        # Convierte los datos a decimales, excepto el primer elemento
+        datos_decimales = [datos[0]] + [float(dato) for dato in datos[1:]]
+        print("Datos decimales en P_Esfera:", datos_decimales)
+        # Realiza el procesamiento correspondiente para el cálculo de la esfera
+    else:
+        print("\033[91mNo hay suficientes datos para procesar en P_Esfera\033[0m")
 
-# Crear un plano (representado por una caja)
-mi_plano = box(pos=vector(0, -2, 0), size=vector(5, 0.01, 5), color=color.green)
-
-# Rotar la esfera y el plano
-while True:
-    mi_esfera.rotate(angle=0.03)
-    mi_plano.rotate(angle=-0.02)
-    rate(100)
