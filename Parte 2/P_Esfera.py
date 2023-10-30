@@ -30,10 +30,12 @@ def simulacionEsfera(distancia_c, velocidad_c, signo_es, signo_pa):
     # Verificar si los signos son iguales
     if signo_esfera*signo_particula > 0:
         signos = True
-    if signo_esfera*signo_particula == 0:
-        volver = False
     else:
         signos = False
+        
+        
+    if signo_esfera*signo_particula == 0:
+        volver = False
 
     # Configuración de la escena
     current_scene = canvas(title='Simulación Esfera', width=1920, height=1080)
