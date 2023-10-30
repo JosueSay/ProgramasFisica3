@@ -30,6 +30,8 @@ def simulacionEsfera(distancia_c, velocidad_c, signo_es, signo_pa):
     # Verificar si los signos son iguales
     if signo_esfera*signo_particula > 0:
         signos = True
+    if signo_esfera*signo_particula == 0:
+        volver = False
     else:
         signos = False
 
@@ -52,26 +54,46 @@ def simulacionEsfera(distancia_c, velocidad_c, signo_es, signo_pa):
 
             # Crear la partícula roja en la posición del clic
             particula_roja = sphere(pos=nueva_posicion, radius=0.1, color=color.red)
-
-            if distancia_c > 0:
-                while mag(particula_roja.pos - nueva_posicion) < distancia_c:
-                    rate(60)
-                    particula_roja.pos = particula_roja.pos + direccion * velocidad_c
-                    distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
-            else:
-                while mag(particula_roja.pos - nueva_posicion) > distancia_c:
-                    rate(60)
-                    particula_roja.pos = particula_roja.pos - direccion * velocidad_c
-                    distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
-
-            if signos == False:  # Si los signos son iguales
-                while mag(particula_roja.pos - nueva_posicion) > 0.01:  # Espera a que la partícula regrese a su posición original
-                    rate(60)
-                    if mag(particula_roja.pos - nueva_posicion) > 0:
-                        particula_roja.pos = particula_roja.pos - direccion * velocidad_c
-                    else:
+            
+            if volver:
+                if distancia_c > 0:
+                    while mag(particula_roja.pos - nueva_posicion) < distancia_c:
+                        rate(60)
                         particula_roja.pos = particula_roja.pos + direccion * velocidad_c
+                        distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
+                else:
+                    while mag(particula_roja.pos - nueva_posicion) > distancia_c:
+                        rate(60)
+                        particula_roja.pos = particula_roja.pos - direccion * velocidad_c
+                        distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
 
+                if signos == False:  # Si los signos son iguales
+                    while mag(particula_roja.pos - nueva_posicion) > 0.01:  # Espera a que la partícula regrese a su posición original
+                        rate(60)
+                        if mag(particula_roja.pos - nueva_posicion) > 0:
+                            particula_roja.pos = particula_roja.pos - direccion * velocidad_c
+                        else:
+                            particula_roja.pos = particula_roja.pos + direccion * velocidad_c
+
+            else:
+                print("No volvere")
+                if distancia_c > 0:
+                    while mag(particula_roja.pos - nueva_posicion) < 1e50:
+                        rate(60)
+                        particula_roja.pos = particula_roja.pos + direccion * velocidad_c
+                        distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
+                else:
+                    while mag(particula_roja.pos - nueva_posicion) > 1e50:
+                        rate(60)
+                        particula_roja.pos = particula_roja.pos - direccion * velocidad_c
+                        distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
+
+                if signos == False:  # Si los signos son iguales
+                    while mag(particula_roja.pos - nueva_posicion) > 0.01:  # Espera a que la partícula regrese a su posición original
+                        rate(60)
+                        if mag(particula_roja.pos - nueva_posicion) > 0:
+                            particula_roja.pos = particula_roja.pos - direccion * velocidad_c
+                        else:
+                            particula_roja.pos = particula_roja.pos + direccion * velocidad_c
     # Capturar eventos de clic del mouse en la escena
     current_scene.bind('click', move_particle)
-    

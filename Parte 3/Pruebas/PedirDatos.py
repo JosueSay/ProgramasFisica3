@@ -167,15 +167,17 @@ def llamarEsfera(datos):
         Q_max = (v_luz**2 * 2 * math.pi * epsilon_0 * masa_p * radio_e) / abs(carga_p)
         print("\033[1m\033[34mLa carga máxima es de:\033[0m", Q_max, "C\n")
         
-        if velocidad_escape = velocidad_inicial_p:
+        if velocidad_escape == velocidad_inicial_p:
             if carga_e < Q_max:
                 # Iniciar simulación
-                iniciar_simulacion_esfera(5, velocidad_inicial_p, 1, 1)
+                iniciar_simulacion_esfera(5,velocidad_inicial_p,0,1)
+                aviso = "\033[1mLa partícula no volverá\033[0m"
+                print(f"\033[1m\033[34m***Dado que la velocidad inicial de la particula {velocidad_inicial_p} m/s = que la velocidad de escape {velocidad_escape} m/s. ***\033[0m \n{aviso}")
             else:
                 # Iniciar simulación
                 iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
                 agujero_negro = True
-                aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
+                aviso = "\033[1mLa esfera se ha convertido en un agujero negro electrostático.\033[0m"
                 print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
         else:
             
@@ -183,7 +185,7 @@ def llamarEsfera(datos):
                 # Iniciar simulación
                 iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
                 agujero_negro = True
-                aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
+                aviso = "\033[1mLa esfera se ha convertido en un agujero negro electrostático.\033[0m"
                 print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
             else:
                 # Iniciar simulación
