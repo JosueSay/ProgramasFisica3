@@ -1,6 +1,6 @@
 # Importar módulos necesarios
-from P_Plano import iniciar_simulacion, cerrar_simulacion_grafica
-
+from P_Plano import iniciar_simulacion_plano, cerrar_simulacion_plano
+from P_Esfera import iniciar_simulacion_esfera, cerrar_simulacion_esfera
 import math
 import sys
 from PyQt5.QtWidgets import (
@@ -29,7 +29,8 @@ particulas_predefinidas = {
 def cerrar_simulacion():
     global current_scene
     try:
-        cerrar_simulacion_grafica()  # Intenta cerrar la simulación gráfica
+        cerrar_simulacion_plano()  # Intenta cerrar la simulación gráfica
+        cerrar_simulacion_esfera()  # Intenta cerrar la simulación gráfica
         mensaje = QMessageBox()
         mensaje.setWindowTitle("Finalizado")
         mensaje.setText("El programa ha finalizado.")
@@ -122,11 +123,11 @@ def llamarPlano(datos):
         print("\t• Velocidad inicial de la partícula: ", velocidad_inicial_p, "m/s")
         
         # Calcular distancia
-        distancia = (epsilon_0 * masa_p * velocidad_inicial_p**2) / (carga_p * densidad_pl)
+        distancia = (epsilon_0 * masa_p * velocidad_inicial_p**2) / (abs(carga_p * densidad_pl))
         print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
         
         # Iniciar simulación
-        iniciar_simulacion(5, velocidad_inicial_p, densidad_pl, carga_p)
+        iniciar_simulacion_plano(5, velocidad_inicial_p, densidad_pl, carga_p)
     except Exception as e:
         print("Error en llamarPlano:", e)
     
@@ -155,23 +156,38 @@ def llamarEsfera(datos):
         
         ## Calculos
         # Calcular distancia
-        distancia = (masa_p * velocidad_inicial_p**2 * 2 * math.pi * epsilon_0 * radio_e**2) / (carga_e * carga_p) + radio_e
+        distancia = (masa_p * velocidad_inicial_p**2 * 2 * math.pi * epsilon_0 * radio_e**2) / (abs(carga_p * carga_e)) + radio_e
         print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
         
         # Velocidad de escape
-        velocidad_escape = math.sqrt((carga_p * carga_e) / (2 * math.pi * epsilon_0 * masa_p * radio_e))
+        velocidad_escape = math.sqrt((abs(carga_p * carga_e)) / (2 * math.pi * epsilon_0 * masa_p * radio_e))
         print("\033[1m\033[34mLa velocidad de escape es de:\033[0m", velocidad_escape, "m/s\n")
         
         # Caga máxima
-        Q_max = (v_luz**2 * 2 * math.pi * epsilon_0 * masa_p * radio_e) / carga_p
+        Q_max = (v_luz**2 * 2 * math.pi * epsilon_0 * masa_p * radio_e) / abs(carga_p)
         print("\033[1m\033[34mLa carga máxima es de:\033[0m", Q_max, "C\n")
         
-        # Comprobar que sea un agujero negro
-        if(carga_e >= Q_max):
-            agujero_negro = True
-            aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
-            print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
-
+        if velocidad_escape = velocidad_inicial_p:
+            if carga_e < Q_max:
+                # Iniciar simulación
+                iniciar_simulacion_esfera(5, velocidad_inicial_p, 1, 1)
+            else:
+                # Iniciar simulación
+                iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
+                agujero_negro = True
+                aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
+                print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
+        else:
+            
+            if carga_e >= Q_max:
+                # Iniciar simulación
+                iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
+                agujero_negro = True
+                aviso = "\033[1mLa esfera se ha convertio en un agujero negro electrostático.\033[0m"
+                print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
+            else:
+                # Iniciar simulación
+                iniciar_simulacion_esfera(5, velocidad_inicial_p, carga_e, carga_p)
         
     except Exception as e:
         print("Error en llamarEsfera:", e)
