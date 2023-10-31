@@ -23,7 +23,7 @@ def ajustar_valores(distancia, velocidad, radio):
     velocidad = ajuste_reloj(velocidad, rango_velocidad)
     radio = ajuste_reloj(radio, rango_radio)
 
-    print(distancia, "-", velocidad, "-", radio)
+    #print(distancia, "-", velocidad, "-", radio)
     return distancia, velocidad, radio
 
 def cerrar_simulacion_esfera():

@@ -22,7 +22,7 @@ def ajustar_valores(distancia, velocidad):
     distancia = ajuste_reloj(distancia, rango_distancia)
     velocidad = ajuste_reloj(velocidad, rango_velocidad)
 
-    print(distancia, "-", velocidad)
+    #print(distancia, "-", velocidad)
     return distancia, velocidad
 
 def cerrar_simulacion_plano():
