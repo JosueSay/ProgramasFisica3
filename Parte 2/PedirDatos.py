@@ -21,8 +21,8 @@ particulas_predefinidas = {
     "Protón": [1.602e-19, 1.673e-27],
     "Positrón": [1.602e-19, 9.109e-31],
     "Alfa": [3.204e-19, 6.644e-27],
-    "Electrón": [-1.602e-19, 9.109e-31],
-    "Neutrón": [0, 1.675e-27]
+    "Núcleo de helio": [3.20435e-19, 6.64424e-27],
+    "Núcleo de hidrogeno": [1.60217663e-19, 1.673e-27]
 }
 
 # Función para cerrar la simulación y salir del programa
@@ -127,7 +127,7 @@ def llamarPlano(datos):
         print("\033[1m\033[34mLa distancia recorrida por la partícula es de:\033[0m", distancia, "m\n")
         
         # Iniciar simulación
-        iniciar_simulacion_plano(5, velocidad_inicial_p, densidad_pl, carga_p)
+        iniciar_simulacion_plano(distancia, velocidad_inicial_p, densidad_pl, carga_p)
     except Exception as e:
         print("Error en llamarPlano:", e)
     
@@ -170,12 +170,12 @@ def llamarEsfera(datos):
         if velocidad_escape == velocidad_inicial_p:
             if carga_e < Q_max:
                 # Iniciar simulación
-                iniciar_simulacion_esfera(5,velocidad_inicial_p,0,1)
+                iniciar_simulacion_esfera(distancia,velocidad_inicial_p, radio_e, 0,1)
                 aviso = "\033[1mLa partícula no volverá\033[0m"
                 print(f"\033[1m\033[34m***Dado que la velocidad inicial de la particula {velocidad_inicial_p} m/s = que la velocidad de escape {velocidad_escape} m/s. ***\033[0m \n{aviso}")
             else:
                 # Iniciar simulación
-                iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
+                iniciar_simulacion_esfera(distancia, velocidad_inicial_p, radio_e,  -1, 1)
                 agujero_negro = True
                 aviso = "\033[1mLa esfera se ha convertido en un agujero negro electrostático.\033[0m"
                 print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
@@ -183,13 +183,13 @@ def llamarEsfera(datos):
             
             if carga_e >= Q_max:
                 # Iniciar simulación
-                iniciar_simulacion_esfera(5, velocidad_inicial_p, -1, 1)
+                iniciar_simulacion_esfera(distancia, velocidad_inicial_p, radio_e,  -1, 1)
                 agujero_negro = True
                 aviso = "\033[1mLa esfera se ha convertido en un agujero negro electrostático.\033[0m"
                 print(f"\033[1m\033[34m***Dado que carga de la esfera {carga_e} C >= que la carga máxima {Q_max} C. ***\033[0m \n{aviso}")
             else:
                 # Iniciar simulación
-                iniciar_simulacion_esfera(5, velocidad_inicial_p, carga_e, carga_p)
+                iniciar_simulacion_esfera(distancia, velocidad_inicial_p, radio_e,  carga_e, carga_p)
         
     except Exception as e:
         print("Error en llamarEsfera:", e)

@@ -3,6 +3,28 @@ from vpython import *
 # Variables globales para gestionar el canvas y la escena
 current_scene = None
 
+def ajustar_valores(distancia, velocidad):
+    # Rangos deseados con enfoque "reloj"
+    rango_distancia = [2, 30]
+    rango_velocidad = [0.01, 1]
+
+    # Función para simular el "reloj"
+    def ajuste_reloj(valor, rango):
+        if valor < rango[0]:
+            diferencia = valor - rango[0]
+            return rango[1] - abs(diferencia) % (rango[1] - rango[0])
+        elif valor > rango[1]:
+            diferencia = valor - rango[1]
+            return rango[0] + abs(diferencia) % (rango[1] - rango[0])
+        return valor
+
+    # Ajuste de la distancia y velocidad con enfoque "reloj"
+    distancia = ajuste_reloj(distancia, rango_distancia)
+    velocidad = ajuste_reloj(velocidad, rango_velocidad)
+
+    print(distancia, "-", velocidad)
+    return distancia, velocidad
+
 def cerrar_simulacion_plano():
     global current_scene
     if current_scene:
@@ -22,6 +44,8 @@ def iniciar_simulacion_plano(distancia, velocidad, signo_pl, signo_pa):
 def simulacionPlano(distancia_c, velocidad_c, signo_pl, signo_pa):
     global current_scene
 
+    n_distancia, n_velocidad = ajustar_valores(distancia_c, velocidad_c)
+    
     signos = False
     signo_plano = signo_pl
     signo_particula = signo_pa
@@ -50,24 +74,24 @@ def simulacionPlano(distancia_c, velocidad_c, signo_pl, signo_pa):
         new_particle = sphere(pos=vector(pos_click.x, 0, pos_click.z), radius=0.1, color=color.red)
         initial_position = new_particle.pos.y  # Guarda la posición inicial de la nueva partícula
 
-        if distancia_c > 0:
-            while new_particle.pos.y < distancia_c:
+        if n_distancia > 0:
+            while new_particle.pos.y < n_distancia:
                 rate(30)  # Controla la velocidad de la animación
-                new_particle.pos.y += velocidad_c
-                distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
+                new_particle.pos.y += n_velocidad
+                distancia_recorrida += n_velocidad  # Actualizar la distancia recorrida
         else:
-            while new_particle.pos.y > distancia_c:
+            while new_particle.pos.y > n_distancia:
                 rate(30)  # Controla la velocidad de la animación
-                new_particle.pos.y -= velocidad_c
-                distancia_recorrida += velocidad_c  # Actualizar la distancia recorrida
+                new_particle.pos.y -= n_velocidad
+                distancia_recorrida += n_velocidad  # Actualizar la distancia recorrida
 
         if signos == False:  # Si los signos son iguales
             while abs(new_particle.pos.y - initial_position) > 0.01:  # Espera a que la partícula regrese a su posición original
                 rate(30)
                 if new_particle.pos.y > initial_position:
-                    new_particle.pos.y -= velocidad_c
+                    new_particle.pos.y -= n_velocidad
                 else:
-                    new_particle.pos.y += velocidad_c
+                    new_particle.pos.y += n_velocidad
 
     # Capturar eventos de clic del mouse en la escena
     current_scene.bind("click", clic)
