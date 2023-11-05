@@ -45,7 +45,13 @@ def simulacionCilindro(datos1, datos2):
     #datos2 = [resistencia, corriente, potencia, velocidad, tiempo, horas]
     # Datos ingresados  
     longitud = datos1[0]
-    diametro = datos1[1]
+    diametro_mostrar = datos1[1]
+    diametro = 0
+    if diametro_mostrar < 2:
+        diametro = 3
+    else:
+        diametro = diametro_mostrar
+    
     material = datos1[2]
     densidad = datos1[3]
     resistividad = datos1[4]
@@ -95,7 +101,7 @@ def simulacionCilindro(datos1, datos2):
         # Mostrar los resultados de cálculos en la esquina superior izquierda
         resistencia_display = label(pos=vector(-longitud, 60, 0), text="Datos Ingresados:", height=15, border=10, font='sans')
         resistencia_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} mm", height=15, border=10, font='sans')
-        corriente_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro} mm", height=15, border=10, font='sans')
+        corriente_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro_mostrar} mm", height=15, border=10, font='sans')
         material_display = label(pos=vector(-longitud, 45, 0), text=f"Material del cable: {material}", height=15, border=10, font='sans')
         potencia_display = label(pos=vector(-longitud, 40, 0), text=f"Densidad de particula: {densidad} electrones/m^3", height=15, border=10, font='sans')        
         velocidad_display = label(pos=vector(-longitud, 35, 0), text=f"Resistividad del material: {resistividad} Ωm", height=15, border=10, font='sans')
