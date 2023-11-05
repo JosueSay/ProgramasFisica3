@@ -1,6 +1,7 @@
 from vpython import *
 from Posiciones import damePosiciones  # Obtener posiciones y & z para la creación de electrones
 import random
+import math
 
 # Variables globales para gestionar el canvas y la escena
 espacio = None
@@ -64,11 +65,9 @@ def simulacionCilindro(datos1, datos2):
     
     velocidad_mostrar = datos2[3]
     velocidad = abs(velocidad_mostrar)
-    if velocidad < 0.1:
-        velocidad = abs(datos2[3])*10
-    else:
-        velocidad = 0.1
-        
+    potencia = abs(math.floor(math.log10(abs(velocidad)))) -1
+    velocidad = velocidad * 10**(potencia)
+    
     tiempo = abs(datos2[4])
     horas = abs(round(datos2[5],3))
 
@@ -112,7 +111,7 @@ def simulacionCilindro(datos1, datos2):
         resistencia_display = label(pos=vector(longitud, 50, 0), text=f"Resistencia: {resistencia:.3e} Ω", height=15, border=10, font='sans')
         corriente_display = label(pos=vector(longitud, 45, 0), text=f"Corriente: {corriente:.3e} A", height=15, border=10, font='sans')
         potencia_display = label(pos=vector(longitud, 40, 0), text=f"Potencia: {potencia:.3e} W", height=15, border=10, font='sans')
-        velocidad_display = label(pos=vector(longitud, 35, 0), text=f"Velocidad: {velocidad_mostrar:.3e} m/s (se multiplicó por un factor de 10)", height=15, border=10, font='sans')
+        velocidad_display = label(pos=vector(longitud, 35, 0), text=f"Velocidad: {velocidad_mostrar:.3e} m/s (se multiplicó por un factor de 10^{potencia})", height=15, border=10, font='sans')
         tiempo_display = label(pos=vector(longitud, 30, 0), text=f"Tiempo: {tiempo} s ≈ {horas:.2f} h", height=15, border=10, font='sans')
         
         
