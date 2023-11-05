@@ -21,7 +21,12 @@ def diametro_seleccionado(index):
         diametro_input.setText(str(diametrosMM_calibre_AWG_[numero_calibre_AWG.index(tipo_diametro_selector.currentText())]))
         diametro_input.setEnabled(False)
 
-from PyQt5.QtWidgets import QMessageBox
+# Función para actualizar resistividad y densidad al cambiar el material del cable
+def material_seleccionado(index):
+    material = material_input.currentText()
+    index = material_cable.index(material)
+    resistividad_text.setText(str(resistividad_material[index]))
+    densidad_text.setText(str(densidad_particulas_material[index]))
 
 def guardar_datos():
     bandera = False
@@ -140,11 +145,12 @@ material_cable = ['Oro', 'Plata', 'Cobre', 'Aluminio', 'Grafito']
 
 material_input = QComboBox()
 material_input.addItems(material_cable)
+material_input.currentIndexChanged.connect(material_seleccionado)
 form_layout.addRow("Material del cable:", material_input)
 
-densidad_particulas_material = [5.90e28, 5.86e28, 8.50e28, 2.20e28, 11.2e28]
+densidad_particulas_material = [5.9e28, 5.86e28, 8.5e28, 2.2e28, 11.2e28]
 
-resistividad_material = [2.44e-8, 1.47e-8, 1.72e-8, 2.75e-8, 3.50e-5]
+resistividad_material = [2.44e-8, 1.47e-8, 1.72e-8, 2.75e-8, 3.5e-5]
 
 densidad_text = QLineEdit()
 densidad_text.setEnabled(False)
