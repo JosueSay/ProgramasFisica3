@@ -1,6 +1,6 @@
 import sys
 import Calculos as c
-import Simulacion_Cilindro as s
+from Simulacion_Cilindro import iniciarSimulacionCilindro
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
@@ -13,23 +13,6 @@ from PyQt5.QtWidgets import (
     QMessageBox
 )
 
-def cerrar_aplicacion():
-    global espacio
-    try:
-        s.cerrarSimulacionCilindro() # Intenta cerrar la simulación gráfica
-        mensaje = QMessageBox()
-        mensaje.setWindowTitle("Finalizado")
-        mensaje.setText("El programa ha finalizado.")
-        mensaje.exec_()
-        sys.exit()
-    except KeyboardInterrupt:
-        print("\033[1m\033[91mPrograma finalizado por el usuario.\033[0m")
-    except SystemExit:
-        print("\033[1m\033[91mSimulación finalizada.\033[0m")
-    except Exception as e:
-        print(f"\033[1m\033[91mError al cerrar la simulación: {e}\033[0m")
-        sys.exit()
-
 def diametro_seleccionado(index):
     if tipo_diametro_selector.currentText() == "Personalizado":
         diametro_input.setEnabled(True)
@@ -38,10 +21,12 @@ def diametro_seleccionado(index):
         diametro_input.setText(str(diametrosMM_calibre_AWG_[numero_calibre_AWG.index(tipo_diametro_selector.currentText())]))
         diametro_input.setEnabled(False)
 
+from PyQt5.QtWidgets import QMessageBox
+
 def guardar_datos():
     bandera = False
     datos = []
-    
+
     try:
         # Obtener valores de los campos de entrada
         longitud = longitud_input.text()
@@ -61,16 +46,12 @@ def guardar_datos():
         else:
             diametro = diametrosMM_calibre_AWG_[numero_calibre_AWG.index(tipo_diametro)]
 
-        # Verificar si los datos son numéricos
-        try:
-            # Intentar convertir a tipo float
-            longitud = float(longitud)
-            voltaje = float(voltaje)
-        except ValueError:
-            raise ValueError("Ingrese valores numéricos.")
+        # Verificar si la longitud y el diámetro son no negativos
+        if float(longitud) < 0 or float(diametro) < 0:
+            raise ValueError("La longitud y el diámetro no pueden ser negativos.")
 
         # Almacenar los datos en una lista
-        datos = [longitud, diametro, material, float(densidad), float(resistividad), voltaje]
+        datos = [float(longitud), float(diametro), material, float(densidad), float(resistividad), float(voltaje)]
         bandera = True
 
     except ValueError as e:
@@ -79,9 +60,10 @@ def guardar_datos():
         mensaje.setWindowTitle("Error")
         mensaje.setText(f"Error al guardar datos: {str(e)}")
         mensaje.exec_()
-    
-    if(bandera):
+
+    if bandera:
         procedimientoFinal(datos)
+
         
 def procedimientoFinal(datos):
     try:
@@ -93,16 +75,7 @@ def procedimientoFinal(datos):
         resistividad = datos[4]
         voltaje = datos[5]
         carga_electron = 1.62e-19
-        
-        # Mostrar datos
-        print("\033[1m\nLos datos que ingresaste son:\033[0m")
-        print("\t• Longitud del cable:", longitud, "m")
-        print("\t• Diámetro del cable:", diametro, "mm")
-        print("\t• Material:", material)
-        print("\t• Densidad de partícula:", densidad, "electrones/m^3")
-        print("\t• Resistividad del material:", resistividad, "Ωm")
-        print("\t• Voltaje suministrado:", voltaje, "V\n")
-        
+
         # Calcular resistencia, corriente, potencia, velocidad y tiempo
         resistencia = c.dameResitencia(resistividad, longitud, diametro)
         corriente = c.dameCorriente(voltaje, resistencia)
@@ -110,13 +83,12 @@ def procedimientoFinal(datos):
         velocidad = c.dameVelocidadArrastre(corriente, densidad, carga_electron, diametro)
         tiempo = c.dameTiempo(longitud, velocidad)
         horas = tiempo / 3600
+        # guardar datos
+        datos1=[longitud, diametro, material, densidad, resistividad, voltaje]
+        datos2 = [resistencia, corriente, potencia, velocidad, tiempo, horas]
         
-        print("\033[1m\033[34mLa resistencia del cable es de:\033[0m", f'{resistencia:.3e}', "Ω")
-        print("\033[1m\033[34mLa corriente del cable es de:\033[0m", f'{corriente:.3e}', "A")
-        print("\033[1m\033[34mLa potencia del cable es de:\033[0m", f'{potencia:.3e}', "W")
-        print("\033[1m\033[34mLa velocidad de arrastre de los electrones es:\033[0m", f'{velocidad:.3e}', "m/s")
-        print("\033[1m\033[34mEl tiempo que le tomará a los electrones atravesar todo el cable es de:\033[0m", f'{tiempo:.3e}', "s, o lo equivalente a", round(horas,3), "horas")
-        s.iniciarSimulacionCilindro(diametro, longitud, densidad, velocidad)
+        iniciarSimulacionCilindro(datos1, datos2)
+        
         
     except Exception as e:
         print("Se ha producido un error:", e)
@@ -188,14 +160,11 @@ voltaje_input = QLineEdit()
 voltaje_input.setPlaceholderText("Voltaje (volts)")
 form_layout.addRow("Voltaje:", voltaje_input)
 
-submit_button = QPushButton("Guardar datos")
+submit_button = QPushButton("Iniciar simulación")
 submit_button.clicked.connect(guardar_datos)
-finish_button = QPushButton("Cerrar")
-finish_button.clicked.connect(cerrar_aplicacion)
 
 layout.addLayout(form_layout)
 layout.addWidget(submit_button)
-layout.addWidget(finish_button)
 window.setLayout(layout)
 
 desktop = QDesktopWidget()

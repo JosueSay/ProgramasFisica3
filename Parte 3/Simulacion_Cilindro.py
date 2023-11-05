@@ -1,10 +1,11 @@
 from vpython import *
 from Posiciones import damePosiciones  # Obtener posiciones y & z para la creación de electrones
+import random
 
 # Variables globales para gestionar el canvas y la escena
 espacio = None
 
-def crearElectrones(cant_electrones, centro_cilindro, radio_cilindro, radio_electron, velocidad_electron):
+def crearElectrones(cant_electrones, centro_cilindro, radio_cilindro, radio_electron, velocidad):
     electrones = []
 
     for i in range(cant_electrones):
@@ -14,9 +15,9 @@ def crearElectrones(cant_electrones, centro_cilindro, radio_cilindro, radio_elec
         # Crear esfera (electrón)
         electron = sphere(pos=posicion, radius=radio_electron, color=color.red)
         
-        electron.direccion = vector(velocidad_electron, 0, 0)  
+        electron.direccion = vector(velocidad, 0, 0)  
         
-        electron.velocidad_electron = velocidad_electron  # Establecer velocidad
+        electron.velocidad = velocidad  # Establecer velocidad
 
         electrones.append(electron)  # Agregar electrón a la lista
 
@@ -34,32 +35,80 @@ def cerrarSimulacionActual():
     if espacio:
         espacio.delete()
 
-def iniciarSimulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corriente_c):
+def iniciarSimulacionCilindro(datos1, datos2):
     cerrarSimulacionActual()  # Cierra el canvas anterior si existe
-    simulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corriente_c)
+    simulacionCilindro(datos1, datos2)
 
-def simulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corriente_c):
-    longitud = int(longitud_c)
-    radio_cilindro = int(diametro_c/2)
+def simulacionCilindro(datos1, datos2):
+    
+    #datos1=[longitud, diametro, material, densidad, resistividad, voltaje]
+    #datos2 = [resistencia, corriente, potencia, velocidad, tiempo, horas]
+    # Datos ingresados  
+    longitud = datos1[0]
+    diametro = datos1[1]
+    material = datos1[2]
+    densidad = datos1[3]
+    resistividad = datos1[4]
+    voltaje = datos1[5]
+    
+    # Datos calculados
+    resistencia = datos2[0]
+    corriente = datos2[1]
+    potencia = datos2[2]
+    
+    velocidad_mostrar = datos2[3]
+    velocidad = abs(velocidad_mostrar)
+    if velocidad < 0.1:
+        velocidad = abs(datos2[3])*10
+    else:
+        velocidad = 0.1
+        
+    tiempo = abs(datos2[4])
+    horas = abs(round(datos2[5],3))
+
+    # Constantes
     radio_electron = 0.25
-    velocidad_electron = velocidad_e
-    centro_cilindro = longitud / 2
     cant_electrones = 100
-    largo_cable = 30
     radio_cable = 1
-    largo_vertical = 30
     msj = ""
     msj2 = ""
-    if corriente_c <0:
+    
+    # Valores usados
+    radio_cilindro = int(diametro / 2)
+    centro_cilindro = longitud / 2
+    largo_cable = diametro
+    largo_vertical = diametro
+
+    if corriente <0:
         msj ="<- Corriente (-)"
         msj2 ="Voltaje (-) ->"
     else:
         msj ="Corriente (+) ->"
         msj2 ="<- Voltaje (+)"
 
+
+
     while True:
         # Configuración de la escena
         espacio = canvas(title='Simulación', width=1920, height=1080)
+        
+        # Mostrar los resultados de cálculos en la esquina superior izquierda
+        resistencia_display = label(pos=vector(-longitud, 60, 0), text="Datos Ingresados:", height=15, border=10, font='sans')
+        resistencia_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} mm", height=15, border=10, font='sans')
+        corriente_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro} mm", height=15, border=10, font='sans')
+        material_display = label(pos=vector(-longitud, 45, 0), text=f"Material del cable: {material}", height=15, border=10, font='sans')
+        potencia_display = label(pos=vector(-longitud, 40, 0), text=f"Densidad de particula: {densidad} electrones/m^3", height=15, border=10, font='sans')        
+        velocidad_display = label(pos=vector(-longitud, 35, 0), text=f"Resistividad del material: {resistividad} Ωm", height=15, border=10, font='sans')
+        tiempo_display = label(pos=vector(-longitud, 30, 0), text=f"Voltaje suministrado: {voltaje} V", height=15, border=10, font='sans')
+        
+        # Mostrar los resultados de cálculos en la esquina superior izquierda
+        resistencia_display = label(pos=vector(longitud, 55, 0), text="Datos Calculados:", height=15, border=10, font='sans')
+        resistencia_display = label(pos=vector(longitud, 50, 0), text=f"Resistencia: {resistencia:.3e} Ω", height=15, border=10, font='sans')
+        corriente_display = label(pos=vector(longitud, 45, 0), text=f"Corriente: {corriente:.3e} A", height=15, border=10, font='sans')
+        potencia_display = label(pos=vector(longitud, 40, 0), text=f"Potencia: {potencia:.3e} W", height=15, border=10, font='sans')
+        velocidad_display = label(pos=vector(longitud, 35, 0), text=f"Velocidad: {velocidad_mostrar:.3e} m/s (se multiplicó por un factor de 10)", height=15, border=10, font='sans')
+        tiempo_display = label(pos=vector(longitud, 30, 0), text=f"Tiempo: {tiempo} s ≈ {horas:.2f} h", height=15, border=10, font='sans')
+        
         
         # Crear cilindro azul horizontal vacío en el centro de la escena
         cable = cylinder(pos=vector(-centro_cilindro, 0, 0), axis=vector(longitud, 0, 0), radius=radio_cilindro, color=color.blue, opacity=0.5)
@@ -95,13 +144,13 @@ def simulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corrient
 
 
         # Llama a la función crearElectrones para generar los electrones
-        electrones = crearElectrones(cant_electrones, centro_cilindro, radio_cilindro, radio_electron, velocidad_electron)
+        electrones = crearElectrones(cant_electrones, centro_cilindro, radio_cilindro, radio_electron, velocidad)
 
         while True:
             rate(100)  # Controla la velocidad de la animación
             for electron in electrones:
                 # Lógica corregida para la dirección del movimiento de los electrones según la corriente
-                if corriente_c > 0:  # Si la corriente es positiva
+                if corriente > 0:  # Si la corriente es positiva
                     electron.pos += electron.direccion
                     # Verificar si el electrón sale del cable y manejar su movimiento
                     if electron.pos.x > centro_cilindro:
@@ -111,8 +160,8 @@ def simulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corrient
                             # Crear un nuevo electrón
                             pY, pZ = damePosiciones(-centro_cilindro, radio_cilindro, radio_electron)
                             nuevo_electron = sphere(pos=vector(-centro_cilindro, pY, pZ), radius=radio_electron, color=color.red)
-                            nuevo_electron.direccion = vector(velocidad_electron, 0, 0)  # Establecer dirección inicial
-                            nuevo_electron.velocidad_electron = velocidad_electron  # Establecer velocidad
+                            nuevo_electron.direccion = vector(velocidad, 0, 0)  # Establecer dirección inicial
+                            nuevo_electron.velocidad = velocidad  # Establecer velocidad
                             electrones.append(nuevo_electron)  # Agregar nuevo electrón a la lista
                     
                 else:  # Si la corriente es negativa
@@ -124,8 +173,8 @@ def simulacionCilindro(diametro_c, longitud_c, densidad_e, velocidad_e, corrient
                         # Crear un nuevo electrón
                         pY, pZ = damePosiciones(centro_cilindro, radio_cilindro, radio_electron)
                         nuevo_electron = sphere(pos=vector(centro_cilindro, pY, pZ), radius=radio_electron, color=color.red)
-                        nuevo_electron.direccion = vector(velocidad_electron, 0, 0)  # Establecer dirección inicial
-                        nuevo_electron.velocidad_electron = -velocidad_electron  # Establecer velocidad
+                        nuevo_electron.direccion = vector(velocidad, 0, 0)  # Establecer dirección inicial
+                        nuevo_electron.velocidad = -velocidad  # Establecer velocidad
                         electrones.append(nuevo_electron)  # Agregar nuevo electrón a la lista
      
-iniciarSimulacionCilindro(5, 10, 5, 0.1,  5)
+#iniciarSimulacionCilindro(5, 10, 5, 0.1,  5)
