@@ -99,7 +99,7 @@ def simulacionCilindro(datos1, datos2):
         
         # Mostrar los resultados de cálculos en la esquina superior izquierda
         resistencia_display = label(pos=vector(-longitud, 60, 0), text="Datos Ingresados:", height=15, border=10, font='sans')
-        resistencia_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} mm", height=15, border=10, font='sans')
+        resistencia_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} m", height=15, border=10, font='sans')
         corriente_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro_mostrar} mm", height=15, border=10, font='sans')
         material_display = label(pos=vector(-longitud, 45, 0), text=f"Material del cable: {material}", height=15, border=10, font='sans')
         potencia_display = label(pos=vector(-longitud, 40, 0), text=f"Densidad de particula: {densidad} electrones/m^3", height=15, border=10, font='sans')        
