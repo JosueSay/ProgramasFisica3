@@ -61,9 +61,10 @@ def simulacionCilindro(datos1, datos2):
     # Datos calculados
     resistencia = datos2[0]
     corriente = datos2[1]
+    corriente_mostar = abs(corriente)
     potencia = datos2[2]
     
-    velocidad_mostrar = datos2[3]
+    velocidad_mostrar = abs(datos2[3])
     velocidad = abs(velocidad_mostrar)
     potencia = abs(math.floor(math.log10(abs(velocidad)))) -1
     velocidad = velocidad * 10**(potencia)
@@ -98,18 +99,18 @@ def simulacionCilindro(datos1, datos2):
         espacio = canvas(title='Simulación', width=1920, height=1080)
         
         # Mostrar los resultados de cálculos en la esquina superior izquierda
-        resistencia_display = label(pos=vector(-longitud, 60, 0), text="Datos Ingresados:", height=15, border=10, font='sans')
-        resistencia_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} m", height=15, border=10, font='sans')
-        corriente_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro_mostrar} mm", height=15, border=10, font='sans')
+        datos_display = label(pos=vector(-longitud, 60, 0), text="Datos Ingresados:", height=15, border=10, font='sans')
+        longitud_display = label(pos=vector(-longitud, 55, 0), text=f"Longitud del cable: {longitud} m", height=15, border=10, font='sans')
+        diametro_display = label(pos=vector(-longitud, 50, 0), text=f"Diámetro del cable: {diametro_mostrar} mm", height=15, border=10, font='sans')
         material_display = label(pos=vector(-longitud, 45, 0), text=f"Material del cable: {material}", height=15, border=10, font='sans')
-        potencia_display = label(pos=vector(-longitud, 40, 0), text=f"Densidad de particula: {densidad} electrones/m^3", height=15, border=10, font='sans')        
-        velocidad_display = label(pos=vector(-longitud, 35, 0), text=f"Resistividad del material: {resistividad} Ωm", height=15, border=10, font='sans')
-        tiempo_display = label(pos=vector(-longitud, 30, 0), text=f"Voltaje suministrado: {voltaje} V", height=15, border=10, font='sans')
+        densidad_display = label(pos=vector(-longitud, 40, 0), text=f"Densidad de particula: {densidad} electrones/m^3", height=15, border=10, font='sans')        
+        resistividad_display = label(pos=vector(-longitud, 35, 0), text=f"Resistividad del material: {resistividad} Ωm", height=15, border=10, font='sans')
+        voltaje_display = label(pos=vector(-longitud, 30, 0), text=f"Voltaje suministrado: {voltaje} V", height=15, border=10, font='sans')
         
         # Mostrar los resultados de cálculos en la esquina superior izquierda
-        resistencia_display = label(pos=vector(longitud, 55, 0), text="Datos Calculados:", height=15, border=10, font='sans')
+        calculos_display = label(pos=vector(longitud, 55, 0), text="Datos Calculados:", height=15, border=10, font='sans')
         resistencia_display = label(pos=vector(longitud, 50, 0), text=f"Resistencia: {resistencia:.3e} Ω", height=15, border=10, font='sans')
-        corriente_display = label(pos=vector(longitud, 45, 0), text=f"Corriente: {corriente:.3e} A", height=15, border=10, font='sans')
+        corriente_display = label(pos=vector(longitud, 45, 0), text=f"Corriente: {corriente_mostar:.3e} A", height=15, border=10, font='sans')
         potencia_display = label(pos=vector(longitud, 40, 0), text=f"Potencia: {potencia:.3e} W", height=15, border=10, font='sans')
         velocidad_display = label(pos=vector(longitud, 35, 0), text=f"Velocidad: {velocidad_mostrar:.3e} m/s (se multiplicó por un factor de 10^{potencia})", height=15, border=10, font='sans')
         tiempo_display = label(pos=vector(longitud, 30, 0), text=f"Tiempo: {tiempo} s ≈ {horas:.2f} h", height=15, border=10, font='sans')
